@@ -17,6 +17,8 @@ def parseSqft(aptUnit):
 def parseAptNum(aptUnit):
     return aptUnit.find_all('td', attrs={"data-label": "Apartment"})[0].get_text();
 
+
+
 with get('https://www.cyanpdx.com/apartmentsearchresult.aspx?Bed=-1&rent=&MoveInDate=&myOlePropertyId=207912&UnitCode=&control=1') as response:
     webpage = response.text
     decimal=locale.localeconv()['decimal_point']
