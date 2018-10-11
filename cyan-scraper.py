@@ -39,7 +39,31 @@ with get('https://www.hollandresidential.com/ladd/floor-plans/') as response:
     soup = BeautifulSoup(webpage,'html.parser')
     # print(soup)
     scripts = soup.find_all("script")
-    print(scripts[len(scripts)-2])
+    dataset = scripts[len(scripts)-2].get_text()
+    dataarraystring = dataset.rsplit('= ')[1].rsplit(';')[0].rsplit('{')
+    dataarray = []
+    for item in dataarraystring:
+        if (len(item) < 4):
+            continue;
+        print(item)
+        unitindex = item.find("Unit")
+        unitstring = item[unitindex + 7]+item[unitindex + 8]+item[unitindex + 9]+item[unitindex + 10]
+        unit= int(unitstring.replace('"', ''))
+        print(unit)
+        sqftindex = item.find("SqFt")
+        sqftstring = item[sqftindex + 7]+item[sqftindex + 8]+item[sqftindex + 9]+item[sqftindex + 10]
+        sqft= int(sqftstring.replace('"', ''))
+        print(sqft)
+        rentindex = item.find("Rent")
+        rentstring = item[rentindex + 7]+item[rentindex + 8]+item[rentindex + 9]+item[rentindex + 10]
+        rent= int(rentstring.replace('"', ''))
+        print(rent)
+        print("Ratio is: " + str((rent/sqft)))
+        dataarray.append('{'+item)
+    # print(dataarray)
+    # for thing in dataarraystring:
+    #     print(thing)
+    # print(dataArray)
     # for aptunit in soup.find_all('tr'):
     #     print(aptunit)
         # rentstring = aptunit.find_all('td', attrs={"data-label": "Rent"})
