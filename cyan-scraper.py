@@ -23,9 +23,12 @@ with get('https://www.cyanpdx.com/apartmentsearchresult.aspx?Bed=-1&rent=&MoveIn
     webpage = response.text
     decimal=locale.localeconv()['decimal_point']
     soup = BeautifulSoup(webpage,'html.parser')
-    table = soup.find_all('tr', class_='AvailUnitRow')
-    for aptunit in table:
-        rent = parseRent(aptunit)
+    print("In CYANPDX we have the following apartments under $2.19/sqft")
+    for aptunit in soup.find_all('tr'):
+        rentstring = aptunit.find_all('td', attrs={"data-label": "Rent"})
+        if(rentstring == []):
+            continue;
+        rent = parseRent(rentstring)
         if(rent == 0):
             continue;
         aptUnitNum = parseAptNum(aptunit)
@@ -33,3 +36,46 @@ with get('https://www.cyanpdx.com/apartmentsearchresult.aspx?Bed=-1&rent=&MoveIn
         apartment = "Apartment: " + str(aptUnitNum) + " for: $" + str(rent) + " with: " + str(sqft) + "sqft"
         if(rent/sqft < 2.19):
             print(apartment)
+
+with get('https://www.hollandresidential.com/ladd/floor-plans/') as response:
+    webpage = response.text
+    decimal=locale.localeconv()['decimal_point']
+    soup = BeautifulSoup(webpage,'html.parser')
+    # print(soup)
+    scripts = soup.find_all("script")
+    dataset = scripts[len(scripts)-2].get_text()
+    dataarraystring = dataset.rsplit('= ')[1].rsplit(';')[0].rsplit('{')
+    print("In The Ladd Apartments we have the following apartments under $2.19/sqft")
+    for item in dataarraystring:
+        if (len(item) < 4):
+            continue;
+        unitindex = item.find("Unit")
+        unitstring = item[unitindex + 7]+item[unitindex + 8]+item[unitindex + 9]+item[unitindex + 10]
+        unit= int(unitstring.replace('"', ''))
+        sqftindex = item.find("SqFt")
+        sqftstring = item[sqftindex + 7]+item[sqftindex + 8]+item[sqftindex + 9]+item[sqftindex + 10]
+        sqft= int(sqftstring.replace('"', ''))
+        rentindex = item.find("Rent")
+        rentstring = item[rentindex + 7]+item[rentindex + 8]+item[rentindex + 9]+item[rentindex + 10]
+        rent= int(rentstring.replace('"', ''))
+        apartment = "Apartment: " + str(unit) + " for: $" + str(rent) + " with: " + str(sqft) + "sqft"
+        if(rent/sqft < 2.19):
+            print(apartment)
+
+    # print(dataarray)
+    # for thing in dataarraystring:
+    #     print(thing)
+    # print(dataArray)
+    # for aptunit in soup.find_all('tr'):
+    #     print(aptunit)
+        # rentstring = aptunit.find_all('td', attrs={"data-label": "Rent"})
+        # if(rentstring == []):
+        #     continue;
+        # rent = parseRent(rentstring)
+        # if(rent == 0):
+        #     continue;
+        # aptUnitNum = parseAptNum(aptunit)
+        # sqft = parseSqft(aptunit)
+        # apartment = "Apartment: " + str(aptUnitNum) + " for: $" + str(rent) + " with: " + str(sqft) + "sqft"
+        # if(rent/sqft < 2.19):
+        #     print(apartment)
