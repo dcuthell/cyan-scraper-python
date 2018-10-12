@@ -6,10 +6,18 @@ import locale
 #CYAN HELPERS
 def parseRent(rentstring):
     rentLow = rentstring[0].get_text().split('-', 1)[0]
+    print(rentLow)
     if(rentLow == 'Call'):
         return 0;
     rent = int(re.sub(r'[^0-9'+decimal+r']+','',rentLow))
     return rent;
+
+def parseRent1(rentstring):
+    rentLow = rentstring[0].get_text().split('-', 1)[0]
+    rent = re.sub(r'[^0-9'+decimal+r']+','',rentLow)
+    if (rent == ''):
+        return 0;
+    return int(rent);
 
 def parseSqft(aptUnit):
     return int(aptUnit.find_all('td', attrs={"data-label": "Sq. Ft."})[0].get_text());
@@ -65,16 +73,16 @@ with get('https://parkavewestpdx.securecafe.com/onlineleasing/park-avenue-west/f
     webpage = response.text
     decimal=locale.localeconv()['decimal_point']
     soup = BeautifulSoup(webpage,'html.parser')
-    print("In CYANPDX we have the following apartments under $2.19/sqft")
     for aptunit in soup.find_all('tr'):
         rentstring = aptunit.find_all('td', attrs={"data-label": "Rent"})
         if(rentstring == []):
             continue;
-        rent = parseRent(rentstring)
-        if(rent == 0):
-            continue;
-        aptUnitNum = parseAptNum(aptunit)
-        sqft = parseSqft(aptunit)
-        apartment = "Apartment: " + str(aptUnitNum) + " for: $" + str(rent) + " with: " + str(sqft) + "sqft"
-        if(rent/sqft < 2.19):
-            print(apartment)
+        rent = parseRent1(rentstring)
+        print(rent)
+        # if(rent == 0):
+        #     continue;
+        # aptUnitNum = parseAptNum(aptunit)
+        # sqft = parseSqft(aptunit)
+        # apartment = "Apartment: " + str(aptUnitNum) + " for: $" + str(rent) + " with: " + str(sqft) + "sqft"
+        # if(rent/sqft < 2.19):
+        #     print(apartment)
