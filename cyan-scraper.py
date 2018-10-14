@@ -3,13 +3,20 @@ from requests import get
 import re
 import locale
 
-def parseRent(aptunit):
-    rentstring = aptunit.find_all('td', attrs={"data-label": "Rent"})
+#CYAN HELPERS
+def parseRent(rentstring):
     rentLow = rentstring[0].get_text().split('-', 1)[0]
     if(rentLow == 'Call'):
         return 0;
     rent = int(re.sub(r'[^0-9'+decimal+r']+','',rentLow))
     return rent;
+
+def parseRent1(rentstring):
+    rentLow = rentstring[0].get_text().split('-', 1)[0]
+    rent = re.sub(r'[^0-9'+decimal+r']+','',rentLow)
+    if (rent == ''):
+        return 0;
+    return int(rent);
 
 def parseSqft(aptUnit):
     return int(aptUnit.find_all('td', attrs={"data-label": "Sq. Ft."})[0].get_text());
@@ -17,8 +24,11 @@ def parseSqft(aptUnit):
 def parseAptNum(aptUnit):
     return aptUnit.find_all('td', attrs={"data-label": "Apartment"})[0].get_text();
 
-
-
+def parseSqft1(aptUnit):
+    sqftstring = aptUnit.find_all('td', attrs={"data-label": "SQ. FT."})[0].get_text()
+    sqft = re.sub(r'[^0-9'+decimal+r']+','',sqftstring)
+    return int(sqft);
+#CYAN
 with get('https://www.cyanpdx.com/apartmentsearchresult.aspx?Bed=-1&rent=&MoveInDate=&myOlePropertyId=207912&UnitCode=&control=1') as response:
     webpage = response.text
     decimal=locale.localeconv()['decimal_point']
@@ -36,7 +46,7 @@ with get('https://www.cyanpdx.com/apartmentsearchresult.aspx?Bed=-1&rent=&MoveIn
         apartment = "Apartment: " + str(aptUnitNum) + " for: $" + str(rent) + " with: " + str(sqft) + "sqft"
         if(rent/sqft < 2.19):
             print(apartment)
-
+#LADD
 with get('https://www.hollandresidential.com/ladd/floor-plans/') as response:
     webpage = response.text
     decimal=locale.localeconv()['decimal_point']
@@ -62,20 +72,19 @@ with get('https://www.hollandresidential.com/ladd/floor-plans/') as response:
         if(rent/sqft < 2.19):
             print(apartment)
 
-    # print(dataarray)
-    # for thing in dataarraystring:
-    #     print(thing)
-    # print(dataArray)
-    # for aptunit in soup.find_all('tr'):
-    #     print(aptunit)
-        # rentstring = aptunit.find_all('td', attrs={"data-label": "Rent"})
-        # if(rentstring == []):
-        #     continue;
-        # rent = parseRent(rentstring)
-        # if(rent == 0):
-        #     continue;
-        # aptUnitNum = parseAptNum(aptunit)
-        # sqft = parseSqft(aptunit)
-        # apartment = "Apartment: " + str(aptUnitNum) + " for: $" + str(rent) + " with: " + str(sqft) + "sqft"
-        # if(rent/sqft < 2.19):
-        #     print(apartment)
+with get('https://parkavewestpdx.securecafe.com/onlineleasing/park-avenue-west/floorplans.aspx') as response:
+    webpage = response.text
+    decimal=locale.localeconv()['decimal_point']
+    soup = BeautifulSoup(webpage,'html.parser')
+    print("In Park Ave West we have the following apartments under $2.19/sqft")
+    for aptunit in soup.find_all('tr'):
+        rentstring = aptunit.find_all('td', attrs={"data-label": "Rent"})
+        if(rentstring == []):
+            continue;
+        rent = parseRent1(rentstring)
+        if(rent == 0):
+            continue;
+        sqft = parseSqft1(aptunit)
+        apartment = "Apartment: CHECKONLINE for: $" + str(rent) + " with: " + str(sqft) + "sqft"
+        if(rent/sqft < 2.19):
+            print(apartment)
