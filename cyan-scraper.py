@@ -6,7 +6,6 @@ import locale
 #CYAN HELPERS
 def parseRent(rentstring):
     rentLow = rentstring[0].get_text().split('-', 1)[0]
-    print(rentLow)
     if(rentLow == 'Call'):
         return 0;
     rent = int(re.sub(r'[^0-9'+decimal+r']+','',rentLow))
@@ -28,7 +27,7 @@ def parseAptNum(aptUnit):
 def parseSqft1(aptUnit):
     sqftstring = aptUnit.find_all('td', attrs={"data-label": "SQ. FT."})[0].get_text()
     sqft = re.sub(r'[^0-9'+decimal+r']+','',sqftstring)
-    return sqft;
+    return int(sqft);
 #CYAN
 with get('https://www.cyanpdx.com/apartmentsearchresult.aspx?Bed=-1&rent=&MoveInDate=&myOlePropertyId=207912&UnitCode=&control=1') as response:
     webpage = response.text
