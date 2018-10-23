@@ -34,16 +34,15 @@ userval = Decimal(input("please enter a $/sqft ratio \n"))
 getcontext().prec = 2
 if (not userval.is_nan()):
     sqftratio = Decimal(userval)
-    print("1")
 else:
     sqftratio = Decimal(2.19)
-    print("2")
+    print("Default ratio set to $2.19/sqft")
 #CYAN
 with get('https://www.cyanpdx.com/apartmentsearchresult.aspx?Bed=-1&rent=&MoveInDate=&myOlePropertyId=207912&UnitCode=&control=1') as response:
     webpage = response.text
     decimal=locale.localeconv()['decimal_point']
     soup = BeautifulSoup(webpage,'html.parser')
-    print("In CYANPDX we have the following apartments under $2.19/sqft")
+    print("In CYANPDX we have the following apartments under $" + str(sqftratio) + "/sqft")
     for aptunit in soup.find_all('tr'):
         rentstring = aptunit.find_all('td', attrs={"data-label": "Rent"})
         if(rentstring == []):
@@ -54,9 +53,8 @@ with get('https://www.cyanpdx.com/apartmentsearchresult.aspx?Bed=-1&rent=&MoveIn
         aptUnitNum = parseAptNum(aptunit)
         sqft = parseSqft(aptunit)
         apartment = "Apartment: " + str(aptUnitNum) + " for: $" + str(rent) + " with: " + str(sqft) + "sqft"
-        if(rent/sqft < 2.19):
+        if(rent/sqft < sqftratio):
             print(apartment)
-            print("ratio is " + str(sqftratio))
 #LADD
 with get('https://www.hollandresidential.com/ladd/floor-plans/') as response:
     webpage = response.text
@@ -66,7 +64,7 @@ with get('https://www.hollandresidential.com/ladd/floor-plans/') as response:
     scripts = soup.find_all("script")
     dataset = scripts[len(scripts)-2].get_text()
     dataarraystring = dataset.rsplit('= ')[1].rsplit(';')[0].rsplit('{')
-    print("In The Ladd Apartments we have the following apartments under $2.19/sqft")
+    print("In The Ladd Apartments we have the following apartments under $" + str(sqftratio) + "/sqft")
     for item in dataarraystring:
         if (len(item) < 4):
             continue;
@@ -80,14 +78,14 @@ with get('https://www.hollandresidential.com/ladd/floor-plans/') as response:
         rentstring = item[rentindex + 7]+item[rentindex + 8]+item[rentindex + 9]+item[rentindex + 10]
         rent= int(rentstring.replace('"', ''))
         apartment = "Apartment: " + str(unit) + " for: $" + str(rent) + " with: " + str(sqft) + "sqft"
-        if(rent/sqft < 2.19):
+        if(rent/sqft < sqftratio):
             print(apartment)
 
 with get('https://parkavewestpdx.securecafe.com/onlineleasing/park-avenue-west/floorplans.aspx') as response:
     webpage = response.text
     decimal=locale.localeconv()['decimal_point']
     soup = BeautifulSoup(webpage,'html.parser')
-    print("In Park Ave Westd we have the following apartments under $2.19/sqft")
+    print("In Park Ave Westd we have the following apartments under $" + str(sqftratio) + "/sqft")
     for aptunit in soup.find_all('tr'):
         rentstring = aptunit.find_all('td', attrs={"data-label": "Rent"})
         if(rentstring == []):
@@ -96,6 +94,6 @@ with get('https://parkavewestpdx.securecafe.com/onlineleasing/park-avenue-west/f
         if(rent == 0):
             continue;
         sqft = parseSqft1(aptunit)
-        apartment = "Apartment: CHECKONLINE for: $" + str(rent) + " with: " + str(sqft) + "sqft"
-        if(rent/sqft < 2.19):
+        apartment = "Apartment available for: $" + str(rent) + " with: " + str(sqft) + "sqft: Check Online"
+        if(rent/sqft < sqftratio):
             print(apartment)
