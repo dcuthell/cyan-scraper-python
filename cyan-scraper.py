@@ -85,7 +85,7 @@ with get('https://parkavewestpdx.securecafe.com/onlineleasing/park-avenue-west/f
     webpage = response.text
     decimal=locale.localeconv()['decimal_point']
     soup = BeautifulSoup(webpage,'html.parser')
-    print("In Park Ave Westd we have the following apartments under $" + str(sqftratio) + "/sqft")
+    print("In Park Ave West we have the following apartments under $" + str(sqftratio) + "/sqft")
     for aptunit in soup.find_all('tr'):
         rentstring = aptunit.find_all('td', attrs={"data-label": "Rent"})
         if(rentstring == []):
