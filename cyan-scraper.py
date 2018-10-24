@@ -45,6 +45,18 @@ def parseSqft2(aptUnit):
     sqft = re.sub(r'[^0-9'+r']+','',sqftstring)
     return int(sqft);
 
+#INDIGO12WESTSTART
+decimal=locale.localeconv()['decimal_point']
+driver = webdriver.Chrome()
+driver.get("https://indigo12west.com/floorplans/")
+time.sleep(5)
+element = driver.find_elements_by_class_name("fpm__tab")[1]
+element.click()
+time.sleep(5)
+html = driver.page_source
+driver.close()
+
+#User Input
 userval = Decimal(input("please enter a $/sqft ratio \n"))
 getcontext().prec = 2
 if (not userval.is_nan()):
@@ -113,21 +125,12 @@ with get('https://parkavewestpdx.securecafe.com/onlineleasing/park-avenue-west/f
         if(rent/sqft < sqftratio):
             print(apartment)
 
-#INDIGO12WEST
-decimal=locale.localeconv()['decimal_point']
-driver = webdriver.Chrome()
-driver.get("https://indigo12west.com/floorplans/")
-time.sleep(5)
-element = driver.find_elements_by_class_name("fpm__tab")[1]
-element.click()
-time.sleep(5)
-html = driver.page_source
-
-driver.close()
+#INDIGO12WEST END
 soup = BeautifulSoup(html, 'html.parser')
 targetdiv = soup.find_all("div", "fpm")[0]
 targettable = targetdiv.find_all("ul", "fpm-floorplan-listing__list")[0]
 units = targettable.find_all("div", "fpm-floorplan-listing__content")
+print("In Indigo 12 West we have the following apartments under $" + str(sqftratio) + "/sqft")
 for unit in units:
     price = unit.find_all("p", "fpm-floorplan-listing__info fpm-floorplan-listing__info--price")
     rent = parseRent2(price)
@@ -137,9 +140,3 @@ for unit in units:
     apartment = "Apartment available for: $" + str(rent) + " with: " + str(sqft) + "sqft: Check Online for Unit#"
     if(rent/sqft < sqftratio):
         print(apartment)
-
-# decimal=locale.localeconv()['decimal_point']
-# string = "                      Studio | 1 Bath | 536 sq. ft.                                            "
-# onestring = string.lstrip().rstrip().split('|', 2)[2].lstrip()
-# twostring = re.sub(r'[^0-9'+r']+','',onestring)
-# print(int(twostring))
