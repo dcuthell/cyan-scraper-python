@@ -10,7 +10,6 @@ import time
 #CYAN HELPERS
 def parseRent(rentstring):
     rentLow = rentstring[0].get_text().split('-', 1)[0]
-    rentLow = rentLow.lstrip()
     if(rentLow == 'Call'):
         return 0;
     rent = int(re.sub(r'[^0-9'+decimal+r']+','',rentLow))
@@ -24,11 +23,10 @@ def parseRent1(rentstring):
     return int(rent);
 
 def parseRent2(rentstring):
-    rentLow = rentstring[0].get_text().split('-', 1)[0]
-    print(rentLow)
-    rent = re.sub(r'[^0-9'+decimal+r']+','',rentLow)
-    if (rent == 'Contact Us'):
+    rentLow = rentstring[0].get_text().lstrip().split('-', 1)[0].rstrip()
+    if (rentLow == 'Contact Us'):
         return 0;
+    rent = re.sub(r'[^0-9'+decimal+r']+','',rentLow)
     return int(rent);
 
 def parseSqft(aptUnit):
@@ -109,6 +107,8 @@ def parseSqft1(aptUnit):
 #         apartment = "Apartment available for: $" + str(rent) + " with: " + str(sqft) + "sqft: Check Online"
 #         if(rent/sqft < sqftratio):
 #             print(apartment)
+
+decimal=locale.localeconv()['decimal_point']
 driver = webdriver.Chrome()
 driver.get("https://indigo12west.com/floorplans/")
 time.sleep(5)
@@ -118,10 +118,13 @@ time.sleep(5)
 html = driver.page_source
 
 driver.close()
-soup = BeautifulSoup(html)
+soup = BeautifulSoup(html, 'html.parser')
 targetdiv = soup.find_all("div", "fpm")[0]
 targettable = targetdiv.find_all("ul", "fpm-floorplan-listing__list")[0]
 units = targettable.find_all("div", "fpm-floorplan-listing__content")
 for unit in units:
-    price = unit.find_all("p", "fpm-floorplan-listing__info fpm-floorplan-listing__info--price")[0]
-    parseRent2(price)
+    price = unit.find_all("p", "fpm-floorplan-listing__info fpm-floorplan-listing__info--price")
+    rent = parseRent2(price)
+    if(rent == 0):
+        continue;
+    print(rent)
