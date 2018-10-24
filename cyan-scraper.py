@@ -10,6 +10,7 @@ import time
 #CYAN HELPERS
 def parseRent(rentstring):
     rentLow = rentstring[0].get_text().split('-', 1)[0]
+    rentLow = rentLow.lstrip()
     if(rentLow == 'Call'):
         return 0;
     rent = int(re.sub(r'[^0-9'+decimal+r']+','',rentLow))
@@ -19,6 +20,14 @@ def parseRent1(rentstring):
     rentLow = rentstring[0].get_text().split('-', 1)[0]
     rent = re.sub(r'[^0-9'+decimal+r']+','',rentLow)
     if (rent == ''):
+        return 0;
+    return int(rent);
+
+def parseRent2(rentstring):
+    rentLow = rentstring[0].get_text().split('-', 1)[0]
+    print(rentLow)
+    rent = re.sub(r'[^0-9'+decimal+r']+','',rentLow)
+    if (rent == 'Contact Us'):
         return 0;
     return int(rent);
 
@@ -111,4 +120,8 @@ html = driver.page_source
 driver.close()
 soup = BeautifulSoup(html)
 targetdiv = soup.find_all("div", "fpm")[0]
-print(targetdiv)
+targettable = targetdiv.find_all("ul", "fpm-floorplan-listing__list")[0]
+units = targettable.find_all("div", "fpm-floorplan-listing__content")
+for unit in units:
+    price = unit.find_all("p", "fpm-floorplan-listing__info fpm-floorplan-listing__info--price")[0]
+    parseRent2(price)
