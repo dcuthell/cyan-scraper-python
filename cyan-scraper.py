@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from requests import get
 from decimal import *
 import re
@@ -44,17 +43,6 @@ def parseSqft2(aptUnit):
     sqftstring = aptUnit.find_all("p", "fpm-floorplan-listing__info")[0].get_text().lstrip().rstrip().split('|', 2)[2].lstrip()
     sqft = re.sub(r'[^0-9'+r']+','',sqftstring)
     return int(sqft);
-
-#INDIGO12WESTSTART
-decimal=locale.localeconv()['decimal_point']
-driver = webdriver.Chrome()
-driver.get("https://indigo12west.com/floorplans/")
-time.sleep(5)
-element = driver.find_elements_by_class_name("fpm__tab")[1]
-element.click()
-time.sleep(5)
-html = driver.page_source
-driver.close()
 
 #User Input
 userval = Decimal(input("please enter a $/sqft ratio \n"))
@@ -103,6 +91,9 @@ with get('https://www.hollandresidential.com/ladd/floor-plans/') as response:
         sqft= int(sqftstring.replace('"', ''))
         rentindex = item.find("Rent")
         rentstring = item[rentindex + 7]+item[rentindex + 8]+item[rentindex + 9]+item[rentindex + 10]
+        #Catch -1 ERROR
+        if(rentstring == '-1",'):
+            rentstring = "10000"
         rent= int(rentstring.replace('"', ''))
         apartment = "Apartment: " + str(unit) + " for: $" + str(rent) + " with: " + str(sqft) + "sqft"
         if(rent/sqft < sqftratio):
@@ -124,6 +115,18 @@ with get('https://parkavewestpdx.securecafe.com/onlineleasing/park-avenue-west/f
         apartment = "Apartment available for: $" + str(rent) + " with: " + str(sqft) + "sqft: Check Online for Unit#"
         if(rent/sqft < sqftratio):
             print(apartment)
+
+#INDIGO12WESTSTART
+decimal=locale.localeconv()['decimal_point']
+driver = webdriver.Chrome()
+driver.get("https://indigo12west.com/floorplans/")
+time.sleep(5)
+element = driver.find_elements_by_class_name("fpm__tab")[1]
+element.click()
+time.sleep(5)
+html = driver.page_source
+driver.close()
+
 
 #INDIGO12WEST END
 soup = BeautifulSoup(html, 'html.parser')
