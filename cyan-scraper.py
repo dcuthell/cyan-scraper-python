@@ -121,10 +121,10 @@ decimal=locale.localeconv()['decimal_point']
 driver = webdriver.Chrome()
 driver.get("https://indigo12west.com/floorplans/")
 driver.minimize_window()
-time.sleep(5)
+
 element = driver.find_elements_by_class_name("fpm__tab")[1]
 element.click()
-time.sleep(5)
+time.sleep(2)
 html = driver.page_source
 driver.close()
 
