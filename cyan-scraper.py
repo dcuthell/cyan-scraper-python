@@ -52,6 +52,19 @@ if (not userval.is_nan()):
 else:
     sqftratio = Decimal(2.19)
     print("Default ratio set to $2.19/sqft")
+
+#INDIGO12WESTSTART
+decimal=locale.localeconv()['decimal_point']
+driver = webdriver.Chrome()
+driver.get("https://indigo12west.com/floorplans/")
+driver.minimize_window()
+
+element = driver.find_elements_by_class_name("fpm__tab")[1]
+element.click()
+time.sleep(5)
+html = driver.page_source
+driver.close()
+
 #CYAN
 with get('https://www.cyanpdx.com/apartmentsearchresult.aspx?Bed=-1&rent=&MoveInDate=&myOlePropertyId=207912&UnitCode=&control=1') as response:
     webpage = response.text
@@ -115,18 +128,6 @@ with get('https://parkavewestpdx.securecafe.com/onlineleasing/park-avenue-west/f
         apartment = "Apartment available for: $" + str(rent) + " with: " + str(sqft) + "sqft: Check Online for Unit#"
         if(rent/sqft < sqftratio):
             print(apartment)
-
-#INDIGO12WESTSTART
-decimal=locale.localeconv()['decimal_point']
-driver = webdriver.Chrome()
-driver.get("https://indigo12west.com/floorplans/")
-driver.minimize_window()
-
-element = driver.find_elements_by_class_name("fpm__tab")[1]
-element.click()
-time.sleep(2)
-html = driver.page_source
-driver.close()
 
 
 #INDIGO12WEST END
