@@ -45,7 +45,7 @@ def parseSqft2(aptUnit):
     return int(sqft);
 
 #User Input
-userval = Decimal(input("please enter a $/sqft ratio \n"))
+userval = Decimal(2.2)
 getcontext().prec = 2
 if (not userval.is_nan()):
     sqftratio = Decimal(userval)
@@ -55,6 +55,8 @@ else:
 
 #INDIGO12WESTSTART
 decimal=locale.localeconv()['decimal_point']
+options = webdriver.ChromeOptions()
+options.add_argument('headless')
 driver = webdriver.Chrome()
 driver.get("https://indigo12west.com/floorplans/")
 driver.minimize_window()
