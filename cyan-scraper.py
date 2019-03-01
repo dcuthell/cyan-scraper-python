@@ -136,6 +136,7 @@ with get('https://parkavewestpdx.securecafe.com/onlineleasing/park-avenue-west/f
 #INDIGO12WEST END
 soup = BeautifulSoup(html, 'html.parser')
 targetdiv = soup.find_all("div", "fpm")[0]
+print(targetdiv)
 targettable = targetdiv.find_all("ul", "fpm-floorplan-listing__list")[0]
 units = targettable.find_all("div", "fpm-floorplan-listing__content")
 print("In Indigo 12 West we have the following apartments under $" + str(sqftratio) + "/sqft")
