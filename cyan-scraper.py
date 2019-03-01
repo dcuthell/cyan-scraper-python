@@ -57,12 +57,13 @@ else:
 decimal=locale.localeconv()['decimal_point']
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(options=options)
 driver.get("https://indigo12west.com/floorplans/")
-driver.minimize_window()
-
+# driver.minimize_window()
+time.sleep(5)
 element = driver.find_elements_by_class_name("fpm__tab")[1]
-element.click()
+actions = webdriver.ActionChains(driver)
+actions.move_to_element(element).click().perform()
 time.sleep(5)
 html = driver.page_source
 driver.close()
