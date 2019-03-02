@@ -45,7 +45,7 @@ def parseSqft2(aptUnit):
     return int(sqft);
 
 #User Input
-userval = Decimal(2.2)
+userval = Decimal(input("please enter a $/sqft ratio \n"))
 getcontext().prec = 2
 if (not userval.is_nan()):
     sqftratio = Decimal(userval)
@@ -59,11 +59,12 @@ options = webdriver.ChromeOptions()
 options.add_argument('headless')
 driver = webdriver.Chrome(options=options)
 driver.get("https://indigo12west.com/floorplans/")
-# driver.minimize_window()
 time.sleep(5)
-element = driver.find_elements_by_class_name("fpm__tab")[1]
+element = driver.find_elements_by_class_name("fpm__tab")[3] #Should be index 1 if not headless, is 3 for mobile
 actions = webdriver.ActionChains(driver)
-actions.move_to_element(element).click().perform()
+actions.move_to_element(element)
+actions.click(element)
+actions.perform()
 time.sleep(5)
 html = driver.page_source
 driver.close()
@@ -136,7 +137,7 @@ with get('https://parkavewestpdx.securecafe.com/onlineleasing/park-avenue-west/f
 #INDIGO12WEST END
 soup = BeautifulSoup(html, 'html.parser')
 targetdiv = soup.find_all("div", "fpm")[0]
-print(targetdiv)
+# print(targetdiv.find_all(id="view"))
 targettable = targetdiv.find_all("ul", "fpm-floorplan-listing__list")[0]
 units = targettable.find_all("div", "fpm-floorplan-listing__content")
 print("In Indigo 12 West we have the following apartments under $" + str(sqftratio) + "/sqft")
